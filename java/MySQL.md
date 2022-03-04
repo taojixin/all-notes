@@ -115,12 +115,12 @@
 
 SQL语言在功能上主要分为如下3大类： 
 
-* DDL（Data Definition Languages、数据定义语言），这些语句定义了不同的数据库、表、视图、索 引等数据库对象，还可以用来创建、删除、修改数据库和数据表的结构。 
+* **DDL**（Data Definition Languages、数据定义语言），这些语句定义了不同的数据库、表、视图、索 引等数据库对象，还可以用来**创建、删除、修改**数据库和数据表的结构。 
 * * 主要的语句关键字包括 CREATE 、 DROP 、 ALTER 等。 
-* DML（Data Manipulation Language、数据操作语言），用于添加、删除、更新和查询数据库记 录，并检查数据完整性。 
+* **DML**（Data Manipulation Language、数据操作语言），用于**添加、删除、更新和查询**数据库记 录，并检查数据完整性。 
 * * 主要的语句关键字包括 INSERT 、 DELETE 、 UPDATE 、 SELECT 等。 
   * SELECT是SQL语言的基础，最为重要。 
-* DCL（Data Control Language、数据控制语言），用于定义数据库、表、字段、用户的访问权限和 安全级别。 
+* **DCL**（Data Control Language、数据控制语言），用于定义数据库、表、字段、用户的访问权限和 安全级别。 
 * * 主要的语句关键字包括 GRANT 、 REVOKE 、 COMMIT 、 ROLLBACK 、 SAVEPOINT 等。
 
 

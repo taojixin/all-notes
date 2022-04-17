@@ -165,9 +165,9 @@ SQL语言在功能上主要分为如下3大类：
 
 
 
-## 二、SQL---SELECT使用
+## 二、DQL
 
-### 1.基本的SELECT语句
+### 1.SELECT语句
 
 #### (1)最基本的select语句
 
@@ -181,7 +181,7 @@ SQL语言在功能上主要分为如下3大类：
 >
 > FROM DUAL; #dual：伪表
 
-#### (2)* : 所有的字段（或列）
+#### (2)* : 所有的列
 
 > SELECT * FROM 表名;
 
@@ -1674,4 +1674,477 @@ HAVING num > 2 # 顺序 4
 ORDER BY num DESC # 顺序 6
 LIMIT 2 # 顺序 7
 ```
+
+
+
+
+
+## 三、DDL
+
+>  DDL（Data Definition Language）：数据定义语言； 可以通过DDL语句对数据库或者表进行：创建、删除、修改等操作；
+
+### 1.数据库操作
+
+#### (1)创建数据库
+
+* 方式1：创建数据库
+
+```mysql
+CREATE DATABASE 数据库名;
+```
+
+* 方式2：创建数据库并指定字符集
+
+```mysql
+CREATE DATABASE 数据库名 CHARACTER SET 字符集;
+```
+
+* 方式3：判断数据库是否已经存在，不存在则创建数据库（ 推荐 ）
+
+```mysql
+CREATE DATABASE IF NOT EXISTS 数据库名;
+```
+
+#### (2)使用数据库
+
+* 查看当前所有的数据库
+
+```mysql
+SHOW DATABASES;
+```
+
+* 查看当前正在使用的数据库(使用全局函数 DATABASE() )
+
+```mysql
+SELECT DATABASE();
+```
+
+* 查看指定库下所有的表
+
+```mysql
+SHOW TABLES FROM 数据库名;
+```
+
+* 查看数据库的创建信息
+
+```mysql
+SHOW CREATE DATABASE 数据库名;
+```
+
+* 使用/切换数据库
+
+```mysql
+USE 数据库名;
+```
+
+#### (3)修改数据库
+
+* 更改数据库字符集
+
+```mysql
+ALTER DATABASE 数据库名 CHARACTER SET 字符集;
+```
+
+* 删除指定的数据库（ 推荐 ）
+
+```mysql
+DROP DATABASE IF EXISTS 数据库名;
+```
+
+
+
+### 2.表操作
+
+#### (1)创建表
+
+* 方式一：
+
+```mysql
+# 格式：
+CREATE TABLE [IF NOT EXISTS] 表名(
+	字段1, 数据类型 [约束条件] [默认值],
+	字段2, 数据类型 [约束条件] [默认值],
+	字段3, 数据类型 [约束条件] [默认值],
+	……
+	[表约束条件]
+);
+
+# 举例1：
+CREATE TABLE emp (
+	-- int类型
+	emp_id INT,
+	-- 最多保存20个中英文字符
+	emp_name VARCHAR(20),
+	-- 总位数不超过15位
+	salary DOUBLE,
+	-- 日期类型
+	birthday DATE
+);
+# 举例2：
+CREATE TABLE dept(
+	-- int类型，自增
+	deptno INT(2) AUTO_INCREMENT,
+	dname VARCHAR(14),
+	loc VARCHAR(13),
+	-- 主键
+	PRIMARY KEY (deptno)
+);
+```
+
+* 方式二：
+
+> 使用 **AS**，将创建表和插入数据结合起来;
+
+```mysql
+# 相当于复制employees表并取名为emp1
+CREATE TABLE emp1 AS SELECT * FROM employees;
+# 创建具有emp2表相相同字段的空表
+CREATE TABLE emp2 AS SELECT * FROM employees WHERE 1=2; 
+# 创建一个具有某个表某些数据的表
+CREATE TABLE dept80
+AS
+SELECT employee_id, last_name, salary*12 ANNSAL, hire_date
+FROM employees
+WHERE department_id = 80;
+```
+
+#### (2)查看表结构
+
+```mysql
+SHOW CREATE TABLE 表名\G
+```
+
+#### (3)修改表
+
+* 追加一个列
+
+```mysql
+# 语法格式
+ALTER TABLE 表名 ADD 【COLUMN】 字段名 字段类型 【FIRST|AFTER 字段名】;
+# 举例：
+ALTER TABLE dept80 ADD job_id varchar(15);
+```
+
+* 修改一个列
+
+```mysql
+# 格式
+ALTER TABLE 表名 MODIFY 【COLUMN】 字段名1 字段类型 【DEFAULT 默认值】【FIRST|AFTER 字段名
+2】;
+# 举例：
+ALTER TABLE dept80 MODIFY last_name VARCHAR(30);
+ALTER TABLE dept80 MODIFY salary double(9,2) default 1000;
+# 注：对默认值的修改只影响今后对表的修改
+```
+
+* 重命名一个列
+
+```mysql
+# 格式
+ALTER TABLE 表名 CHANGE 【column】 列名 新列名 新数据类型;
+# 举例：
+ALTER TABLE dept80 CHANGE department_name dept_name varchar(15);
+```
+
+* 删除一个列
+
+```mysql
+# 格式
+ALTER TABLE 表名 DROP 【COLUMN】字段名;
+# 举例：
+ALTER TABLE dept80 DROP COLUMN job_id;
+```
+
+* 重命名表
+
+```mysql
+# 方式一：
+RENAME TABLE emp TO myemp;
+# 方式二：
+ALTER table dept RENAME [TO] detail_dept; -- [TO]可以省略
+```
+
+* 删除表
+
+```mysql
+# 格式
+DROP TABLE [IF EXISTS] 数据表1 [, 数据表2, …, 数据表n];
+# 举例：
+DROP TABLE dept80;
+```
+
+* 清空表
+
+```mysql
+# TRUNCATE语句不能回滚，而使用 DELETE 语句删除数据，可以回滚
+TRUNCATE TABLE detail_dept;
+# 对比：
+SET autocommit = FALSE;
+DELETE FROM emp2;
+#TRUNCATE TABLE emp2;
+SELECT * FROM emp2;
+ROLLBACK;
+SELECT * FROM emp2;
+```
+
+
+
+### 3.插入数据
+
+#### (1)VALUES的方式插入数据
+
+* 为表的所有字段按默认顺序插入数据
+
+```mysql
+INSERT INTO departments VALUES (100, 'Finance', NULL, NULL);
+```
+
+* 为表的指定字段插入数据
+
+```mysql
+INSERT INTO departments(department_id, department_name) VALUES (80, 'IT');
+```
+
+* 同时插入多条记录
+
+```mysql
+INSERT INTO emp(emp_id,emp_name)
+	VALUES (1001,'shkstart'),
+	(1002,'atguigu'),
+	(1003,'Tom');
+
+```
+
+#### (2)将查询结果插入到表中
+
+* **格式**：
+
+```mysql
+INSERT INTO 目标表名
+(tar_column1 [, tar_column2, …, tar_columnn])
+SELECT
+(src_column1 [, src_column2, …, src_columnn])
+FROM 源表名
+[WHERE condition]
+```
+
+* **举例：**
+
+```mysql
+INSERT INTO emp2
+SELECT *
+FROM employees
+WHERE department_id = 90;
+
+INSERT INTO sales_reps(id, name, salary, commission_pct)
+SELECT employee_id, last_name, salary, commission_pct
+FROM employees
+WHERE job_id LIKE '%REP%';
+```
+
+
+
+### 4.更新数据
+
+* **格式：**
+
+```mysql
+UPDATE table_name
+SET column1=value1, column2=value2, … , column=valuen
+[WHERE condition]
+```
+
+* 使用 WHERE 子句指定需要更新的数据
+
+```mysql
+UPDATE employees
+SET department_id = 70
+WHERE employee_id = 113;
+```
+
+* 省略 WHERE 子句，则表中的所有数据都将被更新
+
+```mysql
+UPDATE copy_emp SET department_id = 110;
+```
+
+
+
+### 5.删除数据
+
+* **格式：**
+
+```mysql
+DELETE FROM table_name [WHERE <condition>];
+```
+
+* 使用 WHERE 子句删除指定的记录
+
+```mysql
+DELETE FROM departments
+WHERE department_name = 'Finance';
+```
+
+* 省略 WHERE 子句，则表中的全部数据将被删除
+
+```mysql
+DELETE FROM copy_emp;
+```
+
+
+
+## 四、约束
+
+### 1.非空约束
+
+> 限定某个字段/某列的值不允许为空;
+>
+> 关键字：**NOT NULL**
+>
+> * 默认，所有的类型的值都可以是NULL，包括INT、FLOAT等数据类型 
+> * 非空约束只能出现在表对象的列上，只能某个列单独限定非空，不能组合非空 
+> * 一个表可以有很多列都分别限定了非空 
+> * 空字符串''不等于NULL，0也不等于NULL
+
+#### (1)添加非空约束
+
+* 建表时添加：
+
+```mysql
+CREATE TABLE emp(
+	id INT(10) NOT NULL,
+	NAME VARCHAR(20) NOT NULL,
+	sex CHAR NULL
+);
+```
+
+* 建表后：
+
+```mysql
+# 格式
+alter table 表名称 modify 字段名 数据类型 not null;
+# 举例：
+ALTER TABLE emp
+MODIFY sex VARCHAR(30) NOT NULL;
+```
+
+#### (2)删除非空约束
+
+```mysql
+# 格式
+alter table 表名称 modify 字段名 数据类型 NULL;
+# 或：
+alter table 表名称 modify 字段名 数据类型;
+# 举例：
+ALTER TABLE emp
+MODIFY sex VARCHAR(30) NULL;
+```
+
+
+
+### 2.唯一性约束
+
+> 用来限制某个字段/某列的值不能重复。
+>
+> 关键字：**UNIQUE**
+>
+> * 同一个表可以有多个唯一约束。 
+> * 唯一约束可以是某一个列的值唯一，也可以多个列组合的值唯一。 
+> * 唯一性约束允许列值为空。 
+> * 在创建唯一约束的时候，如果不给唯一约束命名，就默认和列名相同。 
+> * MySQL会给唯一约束的列上默认创建一个唯一索引。
+
+#### (1)添加唯一约束
+
+* 建表时：
+
+```mysql
+# 格式
+create table 表名称(
+字段名 数据类型 unique,
+字段名 数据类型 unique key,
+);
+# 或：
+create table 表名称(
+字段名 数据类型,
+[constraint 约束名] unique key(字段名)
+);
+# 举例：
+create table student(
+	sname varchar(20),
+	tel char(11) unique,
+	cardid char(18) unique key
+);
+CREATE TABLE USER(
+	id INT NOT NULL,
+	NAME VARCHAR(25),
+	PASSWORD VARCHAR(16),
+	-- 使用表级约束语法
+	CONSTRAINT uk_name_pwd UNIQUE(NAME,PASSWORD)
+    # 表示用户名和密码组合不能重复
+);
+```
+
+* 建表后：
+
+```mysql
+#字段列表中如果是一个字段，表示该列的值唯一。如果是两个或更多个字段，那么复合唯一，即多个字段的组合是唯一的
+#方式1：
+alter table 表名称 add unique key(字段列表);
+#方式2：
+alter table 表名称 modify 字段名 字段类型 unique;
+# 举例：
+# 单个字段
+ALTER TABLE USER
+MODIFY NAME VARCHAR(20) UNIQUE;
+# 字段NAME和字段PASSWORD的组合是唯一的
+ALTER TABLE USER
+ADD CONSTRAINT uk_name_pwd UNIQUE(NAME,PASSWORD);
+```
+
+#### (2)复合唯一约束
+
+```mysql
+# 格式
+create table 表名称(
+	字段名 数据类型,
+	字段名 数据类型,
+	unique key(字段列表) #字段列表中写的是多个字段名，多个字段名用逗号分隔，表示那么是复合唯一，即多个字段的组合是唯一的
+);
+# 举例：
+create table student_course(
+	id int,
+	sid int,
+	cid int,
+	score int,
+	unique key(sid,cid) #复合唯一
+);
+```
+
+#### (3)删除唯一约束
+
+> * 添加唯一性约束的列上也会自动创建唯一索引。
+> *  删除唯一约束只能通过删除唯一索引的方式删除。
+> *  删除时需要指定唯一索引名，唯一索引名就和唯一约束名一样。 
+> * 如果创建唯一约束时未指定名称，如果是单列，就默认和列名相同；如果是组合列，那么默认和() 中排在第一个的列名相同。也可以自定义唯一性约束名。
+
+```mysql
+# 首先查看都有哪些约束
+SELECT * FROM information_schema.table_constraints WHERE table_name = '表名'; 
+# 然后根据约束名删除约束
+ALTER TABLE USER
+DROP INDEX uk_name_pwd;
+# 可以通过 show index from 表名称; 查看表的索引
+```
+
+
+
+### 3.主键约束
+
+> 用来唯一标识表中的一行记录。
+>
+> 关键字：primary key
+>
+> * 主键约束相当于唯一约束+非空约束的组合，主键约束列不允许重复，也不允许出现空值。
+> * 如果是多列组合的复合主键约束，那么这些列都不允许为空值，并且组合的值不允许重复。
 

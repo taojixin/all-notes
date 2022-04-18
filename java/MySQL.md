@@ -2145,6 +2145,130 @@ DROP INDEX uk_name_pwd;
 >
 > 关键字：primary key
 >
-> * 主键约束相当于唯一约束+非空约束的组合，主键约束列不允许重复，也不允许出现空值。
-> * 如果是多列组合的复合主键约束，那么这些列都不允许为空值，并且组合的值不允许重复。
+> * 主键约束相当于**唯一约束**+**非空约束**的组合，主键约束列不允许重复，也不允许出现空值。
+> * 如果是多列组合的**复合主键约束**，那么这些列都不允许为空值，并且**组合的值不允许重复**。
 
+#### (1)添加主键约束
+
+* 建表时：
+
+```mysql
+# 格式
+create table 表名称(
+字段名 数据类型 primary key, #列级模式
+字段名 数据类型
+);
+# 或：
+create table 表名称(
+字段名 数据类型,
+[constraint 约束名] primary key(字段名) #表级模式
+);
+# 举例：
+create table temp(
+	id int primary key,
+	name varchar(20)
+);
+```
+
+* 建表后：
+
+```mysql
+ALTER TABLE 表名称 ADD PRIMARY KEY(字段列表); 
+#字段列表可以是一个字段，也可以是多个字段，如果是多个字段的话，是复合主键
+# 举例：
+ALTER TABLE student ADD PRIMARY KEY (sid);
+ALTER TABLE emp5 ADD PRIMARY KEY(NAME,pwd);
+```
+
+#### (2)复合主键
+
+```mysql
+# 格式
+create table 表名称(
+	字段名 数据类型,
+	字段名 数据类型,
+	primary key(字段名1,字段名2) 
+    #表示字段1和字段2的组合是唯一的，也可以有更多个字段
+);
+# 举例：
+create table student_course(
+	sid int,
+	cid int,
+	score int,
+	primary key(sid,cid) #复合主键
+);
+```
+
+#### (3)删除主键
+
+> **说明**：删除主键约束，**不需要指定主键名**，因为一个表只有一个主键，删除主键约束后，非空还存 在。
+
+```mysql
+# 格式
+alter table 表名称 drop primary key;
+# 举例：
+ALTER TABLE student DROP PRIMARY KEY;
+```
+
+### 4.自增约束
+
+> 某个字段的值自增。
+>
+> 关键字： **auto_increment**
+>
+> * 一个表最多只能有一个自增长列 
+> * 当需要产生唯一标识符或顺序值时，可设置自增长
+> * 自增长列约束的列必须是键列（主键列，唯一键列）
+> * 自增约束的列的数据类型必须是整数类型
+> * 如果自增列指定了 0 和 null，会在当前最大值的基础上自增；如果自增列手动指定了具体值，直接 赋值为具体值。
+
+#### (1)添加自增约束
+
+* 建表时：
+
+```mysql
+# 格式
+create table 表名称(
+字段名 数据类型 primary key auto_increment,
+字段名 数据类型 unique key not null,
+字段名 数据类型 unique key,
+字段名 数据类型 not null default 默认值,
+);
+create table 表名称(
+字段名 数据类型 default 默认值 ,
+字段名 数据类型 unique key auto_increment,
+字段名 数据类型 not null default 默认值,,
+primary key(字段名)
+);
+# 举例：
+create table employee(
+	eid int primary key auto_increment,
+	ename varchar(20)
+);
+```
+
+* 建表后：
+
+```mysql
+# 格式
+alter table 表名称 modify 字段名 数据类型 auto_increment;
+# 举例：
+alter table employee modify eid int auto_increment;
+```
+
+#### (2)删除自增约束
+
+```mysql
+# 格式
+alter table 表名称 modify 字段名 数据类型; #去掉auto_increment相当于删除
+# 举例：
+alter table employee modify eid int;
+```
+
+
+
+### 5.外键约束
+
+> 定某个表的某个字段的引用完整性。
+>
+> 关键字：**FOREIGN KEY**

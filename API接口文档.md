@@ -255,6 +255,113 @@
 }
 ```
 
+## 三、个人介绍
+
+### 1.获取个人信息
+
+> 严格根据请求参数返回查询结果。
+
+* 请求路径：/introduce/getintroduce
+* 请求方式：post
+* 请求参数：
+
+| 参数名   | 参数说明             | 备注                              |
+| -------- | -------------------- | --------------------------------- |
+| queryKey | 需要查询的信息内容荣 | 参数内容为”all“时表示查询所有内容 |
+
+* 参数值
+
+| 值              | 说明                  |
+| --------------- | --------------------- |
+| my_id           | id                    |
+| my_name         | 姓名                  |
+| my_phone        | 电话                  |
+| my_sex          | 性别                  |
+| my_email        | 邮箱                  |
+| my_birthday     | 生日 格式：2022.02.22 |
+| my_qq           | qq号                  |
+| my_address      | 地址                  |
+| my_koseki       | 户籍                  |
+| my_education    | 学历                  |
+| my_school       | 学校                  |
+| my_professional | 专业                  |
+| my_state        | 状态                  |
+| my_signature    | 签名 （段落）         |
+| my_hobbyies     | 爱好 （段落）         |
+
+* 响应参数：和上面参数值相同
+
+* 响应数据：
+
+```json
+{
+    "my_id": 1,
+    "my_name": "陶继鑫",
+    "my_phone": "18581766104",
+    "my_sex": "男",
+    "my_email": "491675919@qq.com",
+    "my_birthday": "2001.07.24",
+    "my_qq": "491675919",
+    "my_address": "四川省资阳市",
+    "my_koseki": "四川省资阳市",
+    "my_education": "本科",
+    "my_school": "四川工商学院",
+    "my_professional": "软件工程",
+    "my_state": "学生就读",
+    "my_signature": "如果debugging是一种消灭bug的过程，那编程就一定是把bug放进去的过程。",
+    "my_hobbyies": "吃饭睡觉打豆豆！"
+}
+```
+
+
+
+## 四、Demo
+
+### 1.获取demo相关信息
+
+* 请求路径：/getalldemo
+* 请求方式：post
+* 请求参数：
+
+| 参数名 | 参数说明                                         | 备注 |
+| ------ | ------------------------------------------------ | ---- |
+| getId  | 当值为了值表示查询所有，当为某个值时查询对应信息 |      |
+
+* 响应参数：为一个数组，数组中有多个对象，对象中含对应参数
+
+| 参数名          | 参数说明 | 备注             |
+| --------------- | -------- | ---------------- |
+| id              | demo的id |                  |
+| user_id         |          |                  |
+| demo_describe   | 描述     |                  |
+| demo_knowkedge  | 知识点   |                  |
+| demo_code       | 代码     | 转化为html之后的 |
+| demo_createtime | 上传时间 |                  |
+
+* 响应参数：
+
+```json
+[
+    {
+        "id": 1,
+        "user_id": 1,
+        "demo_describe": "简约动态标签",
+        "demo_knowkedge": "transform:rotate、translate，opacity，transition",
+        "demo_code": "<p>null</p>\n",
+        "demo_createtime": "2022-05-22T16:51:00.000Z"
+    },
+    ······
+    {
+        "id": 13,
+        "user_id": 1,
+        "demo_describe": "简约CSS特效标签",
+        "demo_knowkedge": "文字阴影text-shadow",
+        "demo_code": "<pre><code class=\"language-javascript\">&lt;template&gt;\n  &lt;div class=&quot;tag&quot;&gt;\n    &lt;div c    ······    }\n\n\n\n}\n&lt;/style&gt;\n</code></pre>\n",
+        "demo_createtime": "2022-05-25T15:47:53.000Z"
+    }
+]
+```
+
 
 
 
@@ -450,6 +557,68 @@
 }
 ```
 
+### 6.获取某个笔记信息
+
+* 请求路径：/getonenote
+
+* 请求方式：post
+* 请求参数：
+
+| 参数名 | 参数说明 | 备注 |
+| ------ | -------- | ---- |
+| noteId | 笔记id   |      |
+
+* 响应参数：
+
+| 参数名          | 参数说明 | 备注             |
+| --------------- | -------- | ---------------- |
+| id              | id       |                  |
+| note_title      | 标题     |                  |
+| note_describe   | 描述     |                  |
+| note_content    | 内容     | 转化为html之后的 |
+| note_createtime | 上传时间 |                  |
+| note_sort       | 分类     |                  |
+
+* 响应数据
+
+```json
+{
+    "id": 79,
+    "note_title": "CSS3",
+    "note_describe": "包含CSS3动画以及2D3D转换等内容。",
+    "note_content": "## 2D转换\n\n> **转换**（transform）是CSS3中具有颠覆性    ······    </div>\n\t\t</section>\n\t</body>\n</html>\n\n```\n\n",
+    "note_createtime": "2022-04-27T19:55:38.000Z",
+    "note_sort": "css"
+}
+```
+
+### 7.修改某个笔记信息
+
+> 根据id修改某个信息。
+
+* 请求参数：/modifynote
+* 请求方式：post
+* 请求参数：
+
+| 参数名        | 参数说明 | 备注     |
+| ------------- | -------- | -------- |
+| id            | 笔记id   |          |
+| note_title    | 标题     |          |
+| note_describe | 描述     |          |
+| note_content  | 内容     |          |
+| note_sort     | 分类     | 分类固定 |
+
+* 响应参数
+* 响应数据
+
+```javascript
+"修改成功"
+```
+
+
+
+
+
 ## 三、Demo
 
 ### 1.获取demo相关信息
@@ -478,14 +647,17 @@
 * 响应数据
 
 ```json
-{
-    "id": 1,
-    "user_id": 1,
-    "demo_describe": "简约动态标签",
-    "demo_knowkedge": "transform:rotate、translate，opacity，transition",
-    "demo_code": null,
-    "demo_createtime": "2022-05-22T16:51:00.000Z"
-}
+[
+    {
+        "id": 12,
+        "user_id": 1,
+        "demo_describe": "代码片段",
+        "demo_knowkedge": "markdoq、html、css",
+        "demo_code": "<pre><code class=\"language-javascript\">const { getPassword } = require('../service/login.service')\nconst jwt = require('jsonwebtoken')\nconst { PRIVATE_KEY } = require('../app/config')\nclass LoginController {\n  // 登录\n  async login(req, res, next) {\n    const { name, password } = req.body\n\n    if (password === await getPassword(name)) {\n      // 生成token\n      const token = jwt.sign({ name, password }, PRIVATE_KEY, {\n        expiresIn: 60 * 60 * 24, // 一天\n        algorithm: &quot;RS256&quot; // 这里必须写RS256(非对象加密)，因为默认为HS256(对称加密)\n      })\n      return res.json({\n        data: { code: 0, token: token },\n        meta: { message: &quot;登录成功！&quot;, status: 200 }\n      })\n    }\n\n  }\n}\n\nmodule.exports = new LoginController();\n</code></pre>\n",
+        "demo_createtime": "2022-05-25T14:51:02.000Z",
+        "path": "dfsdf"
+    }
+]
 ```
 
 ### 2.添加demo相关信息
@@ -501,6 +673,7 @@
 | knowledge | 同上     |      |
 | code      | 同上     |      |
 | time      | 添加时间 |      |
+| path      | 路径     |      |
 
 * 响应参数
 * 响应数据
@@ -511,7 +684,7 @@
 
 ### 3.删除demo相关信息
 
-* 请求路径：/deldemo
+* 请求路径：/deledemo
 * 请求方式：delete
 * 请求参数：
 
@@ -525,6 +698,27 @@
 
 ```
 "删除成功！"
+```
+
+### 4.修改demo相关信息
+
+* 请求路径：/modifydemo
+* 请求方式：post
+* 请求参数：
+
+| 参数名         | 参数说明 | 备注 |
+| -------------- | -------- | ---- |
+| demoId         | demo的id |      |
+| demo_describe  |          |      |
+| demo_knowledge |          |      |
+| demo_code      |          |      |
+| path           | 路径     |      |
+
+* 响应参数
+* 响应数据
+
+```
+"修改成功"
 ```
 
 
@@ -643,4 +837,139 @@
 "修改成功"
 "修改失败"
 ```
+
+
+
+## 五、留言
+
+### 1.获取留言
+
+> 根据页数与行数获取留言。
+
+* 请求路径：/getsomecomments
+* 请求方式：post
+* 请求参数：
+
+| 参数名 | 参数说明 | 备注 |
+| ------ | -------- | ---- |
+| page   | 第几页   |      |
+| num    | 一页几个 |      |
+
+* 响应参数：
+
+| 参数名      | 参数说明 | 备注 |
+| ----------- | -------- | ---- |
+| id          |          |      |
+| com_name    | 昵称     |      |
+| create_time | 日期     |      |
+| good_number | 点赞数   |      |
+| com_content | 评论内容 |      |
+
+* 响应数据：
+
+```javascript
+[
+    {
+        "id": 15,
+        "com_name": "",
+        "create_time": "2022-04-19T23:56:52.000Z",
+        "good_number": 0,
+        "com_content": ""
+    },
+    ······
+    {
+        "id": 24,
+        "com_name": "地方撒",
+        "create_time": "2022-04-20T00:15:14.000Z",
+        "good_number": 0,
+        "com_content": "算法"
+    }
+]
+```
+
+### 2.获取留言总数
+
+* 请求路径：/getcommenttotal
+* 请求方式：post
+* 请求参数：无
+* 响应参数：返回的是一个数组，包含一个对象，对象中有参数
+
+| 参数名 | 参数说明 | 备注 |
+| ------ | -------- | ---- |
+| total  | 评论总数 |      |
+
+* 响应数据
+
+```json
+[
+    {
+        "total": 70
+    }
+]
+```
+
+### 3.删除某条评论
+
+> 根据id删除某条评论。
+
+* 请求路径： /delsomecomment
+* 请求方式：delete
+* 请求参数：
+
+| 参数名 | 参数说明         | 备注 |
+| ------ | ---------------- | ---- |
+| delId  | 要删除的评论的id |      |
+
+* 响应参数
+* 响应数据
+
+```json
+"删除成功！"
+```
+
+
+
+## 六、图片
+
+### 1.上传图片接口
+
+> 上传图片，第一次上传为正常上传，第二次上传为更新图片及图片信息。
+
+* 请求路径：/demoimg
+* 请求方式：post
+* 请求参数：
+
+| 参数名  | 参数说明 | 备注 |
+| ------- | -------- | ---- |
+| demo_id | demo的id |      |
+
+* 响应参数
+* 响应数据：
+
+```json
+{
+    "state": 200,
+    "message": "更新成功！"
+}
+```
+
+### 2.获取图片接口
+
+* 请求路径：/getdemoimg?demo_id=？
+* 请求方式：post
+* 请求参数：post请求路径携带参数为demo的id
+* 响应参数
+* 响应数据：直接为图片
+
+
+
+
+
+
+
+
+
+
+
+
 

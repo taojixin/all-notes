@@ -1132,3 +1132,316 @@ const obj: NewType = {
 }
 ```
 
+#### (6)接口的实现
+
+```typescript
+interface ISwim {
+  swimming: () => void
+}
+interface IEat {
+  eating: () => void
+}
+// 类实现接口
+class Animal {
+
+}
+// 继承：只能实现单继承
+// 实现：实现接口，类可以实现多个接口
+class Fish extends Animal implements ISwim, IEat {
+  swimming() {
+    console.log("fish Swimming");
+  }
+  eating() {
+    console.log("fish Eating");
+  }
+}
+class Person implements ISwim {
+  swimming() {
+    console.log("person swimming");
+  }
+}
+
+// 接口的作用：编写一些公共的API
+function swimAction(swimable: ISwim) {
+  swimable.swimming()
+}
+// 1.所有实现了接口的类对应的对象，都是可以传入的
+swimAction(new Fish())
+swimAction(new Person())
+
+swimAction({swimming: function() {}})
+```
+
+#### (7)interface和type区别
+
+* interface 可以重复的对某个接口来定义属性和方法； 
+* type定义的是别名，别名是不能重复的；
+
+```typescript
+interface IFoo {
+  name: string
+}
+interface IFoo {
+  age: number
+}
+// 分开写实际会做一个合并
+const foo: IFoo = {
+  name: 'tjx',
+  age: 10
+}
+```
+
+#### (8)字面量赋值
+
+```typescript
+interface IPerson {
+  name: string
+  age: number
+  height: number
+}
+const info = {
+  name: 'tjx',
+  age: 10,
+  height: 1.88,
+  address: '四川'
+}
+// const p: IPerson = {
+//   name: 'tjx',
+//   age: 10,
+//   height: 1.88,
+//   address: '四川' // 报错
+// }
+const p: IPerson = info  // 不报错  
+// 这是因为TypeScript在字面量直接赋值的过程中，为了进行类型推导会进行严格的类型限制。
+// 但是之后如果我们是将一个 变量标识符 赋值给其他的变量时，会进行freshness擦除操作。
+console.log(info);
+console.log(p);
+```
+
+#### (9)枚举类型
+
+> **枚举**其实就是将一组可能出现的值，一个个列举出来，定义在一个类型中，这个类型就是枚举类型； p枚举允许开发者定义一组命名常量，常量可以是数字、字符串类型；
+
+```typescript
+enum Direction {
+  LEFT,
+  RIGHT,
+  TOP,
+  BOTTOM
+}
+function turnDirection(direction: Direction) {
+}
+turnDirection(Direction.BOTTOM)
+turnDirection(Direction.TOP)
+```
+
+* 枚举类型的值
+
+```typescript
+enum Direction {
+  // 枚举类型的值也可以手动改变,也可以是字符串
+  LEFT = 100,
+  RIGHT,
+  TOP,
+  BOTTOM = 111
+}
+function turnDirection(direction: Direction) {
+  console.log(direction);
+  
+} 
+// 枚举类型其实是有个默认的值的：改变之前如下
+// turnDirection(Direction.BOTTOM) // 3
+// turnDirection(Direction.TOP) // 2
+// 改变之后
+turnDirection(Direction.BOTTOM) // 111
+turnDirection(Direction.RIGHT) // 101
+turnDirection(Direction.TOP) // 102
+turnDirection(Direction.LEFT) // 100
+```
+
+### 3.泛型
+
+> 泛型就是对类型进行参数化。
+
+#### (1)泛型的基本使用
+
+```typescript
+// 在定义函数时，不指明参数的类型，而是让调用者以参数的形式告知是什么类型
+function sum<Type>(num: Type): Type {
+  return num
+}
+// 调用方式一：明确的传入类型
+sum<number>(1)
+sum<{name: string}>({name: 'tjx'})
+sum<any[]>(['abc'])
+// 调用方式二：类型推导
+// 他会自己推导参数是什么类型
+sum(50) 
+sum('abc')
+```
+
+#### (2)泛型接收类型
+
+> 泛型可以有多个参数。
+
+```typescript
+// 泛型可以由多个参数
+function foo<T, E>(args: T, args2: E) {
+
+}
+foo<number, string>(10, "as")
+```
+
+#### (3)泛型接口
+
+```typescript
+interface IPerson<T1, T2> {
+  name: T1
+  age: T2
+}
+const p: IPerson<string, number> = {
+  name: 'tjx',
+  age: 19
+}
+// 没有类型推导，但是可以给一个默认类型
+// interface IPerson<T1, T2 = number> {
+//   name: T1
+//   age: T2
+// }
+```
+
+#### (4)泛型类
+
+```typescript
+class Point<T> {
+  x: T
+  y: T
+  z: T
+  constructor(x: T, y: T, z: T) {
+    this.x = x
+    this.y = y
+    this.z = z
+  }
+}
+const p = new Point<string>('1.2', '1.4', '2')
+// 类型推导
+const p2 = new Point('1.2', '1.4', '2')
+const p3: Point<string> = new Point('1.2', '1.4', '2')
+
+const name: Array<string> = ['abc']
+```
+
+#### (5)泛型约束
+
+```typescript
+interface ILength {
+  length: number
+}
+// 通过extends对类型进行限制
+function getLength<T extends ILength>(arg: T) {
+  return arg.length
+}
+getLength('abc')
+getLength(['abc', 'dsf'])
+getLength({length: 100})
+```
+
+
+
+## 四、其他内容补充
+
+### 1.命名空间
+
+> 命名空间在TypeScript早期时，称之为内部模块，主要目的是将一个模块内部再进行作用域的划分，防止一些命名 冲突的问题。一般较少使用。
+
+* 定义：
+
+```typescript
+namespace time {
+  export function format(time: string) {
+    return "2022-02-22"
+  }
+
+  export function foo() {
+
+  }
+  // 命名空间的东西只能在内部使用，要想在外部使用需要export导出
+  let name: string = 'abc'
+}
+
+// 要想在另一个模块中使用命名空间，命名空间也需要导出
+export namespace price {
+  export function format(price: number) {
+    return "99.99"
+  }
+}
+
+// 使用
+time.format
+price.format
+// time.name
+```
+
+### 2.类型定义文件
+
+> **typescript文件：.d.ts文件** 
+>
+> 我们之前编写的typescript文件都是 .ts 文件，这些文件最终会输出 .js 文件，也是我们通常编写代码的地方； 
+>
+> 还有另外一种文件 **.d.ts** 文件，它是用来做**类型的声明(declare)**。 它仅仅用来做类型检测，告知typescript我们有哪 些类型；
+>
+> 那么typescript会在哪里查找我们的类型声明呢？**内置类型声明**； **外部定义类型声明**；**自己定义类型声明**；
+
+#### (1)内置类型声明
+
+> 内置类型声明是typescript自带的、帮助我们内置了JavaScript运行时的一些标准化API的声明文件；包括比如Math、Date等内置类型，也包括DOM API，比如Window、Document等；
+>
+> 内置类型声明通常在我们安装typescript的环境中会带有的； https://github.com/microsoft/TypeScript/tree/main/lib
+
+#### (2)外部定义类型声明
+
+> 外部类型声明通常是我们使用一些库（比如第三方库）时，需要的一些类型声明。
+
+**这些库通常有两种类型声明方式：**
+
+* 方式一：在自己库中进行类型声明（编写.d.ts文件），比如axios 
+* 方式二：通过社区的一个公有库DefinitelyTyped存放类型声明文件
+* * 该库的GitHub地址：https://github.com/DefinitelyTyped/DefinitelyTyped/ 
+  * 该库查找声明安装方式的地址：https://www.typescriptlang.org/dt/search?search= 
+  * 比如我们安装react的类型声明： npm i @types/react --save-dev
+
+#### (3)自定义声明文件
+
+> 创建一个 XXX.d.ts 的文件，在任何地方都可以，在其中自定义类型声明。
+
+```typescript
+// 声明模块
+declare module 'lodash' {
+  export function join(arr: any[]): void
+}
+
+// 声明变量、函数、类
+declare let tjxName: string
+declare let tjxAge: number
+declare let tjxHeight: number
+
+declare function tjxFoo(): void
+
+declare class Person {
+  name: string
+  age: number
+  constructor(name: string, age: number)
+}
+
+// 声明文件
+// 在某些情况下，我们也可以声明文件：
+// 比如在开发vue的过程中，默认是不识别我们的.vue文件的，那么我们就需要对其进行文件的声明；
+// 比如在开发中我们使用了 jpg 这类图片文件，默认typescript也是不支持的，也需要对其进行声明；
+declare module '*.jpg'
+
+// 声明命名空间
+declare namespace $ {
+  export function ajax(settings: any): any
+}
+```
+

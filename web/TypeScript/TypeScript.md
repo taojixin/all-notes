@@ -1445,3 +1445,10 @@ declare namespace $ {
 }
 ```
 
+### 3.tsconfig.json文件
+
+> **tsconfig.json**是用于配置TypeScript编译时的配置选项：https://www.typescriptlang.org/tsconfig
+
+![image-20220725210809866](D:\Typora笔记\web\TypeScript\img\tsconfig1.png)
+
+![image-20220725210847297](D:\Typora笔记\web\TypeScript\img\tsconfig2.png)

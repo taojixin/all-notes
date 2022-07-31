@@ -325,16 +325,44 @@ router.addRoute('home', {
 ### 14.动态删除路由
 
 * 方式一：添加一个name相同的路由； 
-* 方式二：通过removeRoute方法，传入路由的名称； 
-* 方式三：通过addRoute方法的返回值回调；
-
 ```javascript
-// 方式一：
 router.addRouter({ path: '/about', name: 'about', component: About})
 // 这将会删除之前已经添加的路由，因为他们具有相同的名字且名字必须是唯一的
 router.addRouter({ path: '/other', name: 'about', component: Home})
+```
+* 方式二：通过removeRoute方法，传入路由的名称； 
 
-// 方式二：
+```javascript
+router.addRouter({ path: '/about', name: 'about', component: About})
+router.removeRoute('about')
+```
 
+* 方式三：通过addRoute方法的返回值回调；
+
+```javascript
+const removeRoute = router.addRoute(routeRecord)
+removeRoute()  
+```
+
+**补充：**
+
+*  **router.hasRoute()**：检查路由是否存在。
+* **router.getRoutes()**：获取一个包含所有路由记录的数组。
+
+
+
+### 15.导航守卫
+
+> vue-router 提供的导航守卫主要用来通过跳转或取消的方式守卫导航。Vue提供了很多的其他守卫函数，目的都是在某一个时刻给予我们回调，让我们可以更好的控制程序的流程或者功能： https://next.router.vuejs.org/zh/guide/advanced/navigation-guards.html
+
+```javascript
+// 导航守卫 beforEach
+// router.beforeEach((to, form) => {
+//   // to: route对象，即将跳转到的route对象
+//   // from: route对象，从哪一个路由对象跳转过来的
+//   // 返回值：1.false 不进行导航 2.undefined或不写返回值：进行默认导航，该去哪去哪 3.字符串：路径，跳转到该路径中去
+//   console.log();
+//   return false // 不能跳转
+// })
 ```
 

@@ -40,3 +40,11 @@
 
 ### 13.Prettier - Code formatter
 
+### 14 微信小程序开发插件
+
+#### 1.WXML-Language Service
+
+#### 2.小程序开发助手
+
+#### 3.wechat-snippet
+

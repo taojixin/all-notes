@@ -1449,6 +1449,6 @@ declare namespace $ {
 
 > **tsconfig.json**是用于配置TypeScript编译时的配置选项：https://www.typescriptlang.org/tsconfig
 
-![image-20220725210809866](\img\tsconfig1.png)
+![image-20220725210809866](./img/tsconfig1.png)
 
-![image-20220725210847297](\img\tsconfig2.png)
+![image-20220725210847297](./img/tsconfig2.png)

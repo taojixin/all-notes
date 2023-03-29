@@ -15,7 +15,7 @@
 
 **三个值：**
 
-![image-20220925201223881](.\images\flex-wrap.png)
+![image-20220925201223881](./images/flex-wrap.png)
 
 ### 3.flex-flow
 
@@ -31,7 +31,7 @@
 - space-between：两端对齐，项目之间的间隔都相等。
 - space-around：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。
 
-![image-20220925201359897](.\images\justify-content.png)
+![image-20220925201359897](./images/justify-content.png)
 
 ### 5.align-items
 
@@ -43,7 +43,7 @@
 - baseline: 项目的第一行文字的基线对齐。
 - stretch（默认值）：如果项目未设置高度或设为auto，将占满整个容器的高度。
 
-![image-20220925201459473](.\images\align-items.png)
+![image-20220925201459473](./images/align-items.png)
 
 ### 6.align-content
 
@@ -56,4 +56,4 @@
 - space-around：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。
 - stretch（默认值）：轴线占满整个交叉轴。
 
-![image-20220925201604463](.\images\align-content.png)
+![image-20220925201604463](./images/align-content.png)

@@ -337,9 +337,9 @@ module.exports = {
 
 **Browserslist编写规则**：
 
-![image-20220630111320793](.\images\编写规则1.png)
+![image-20220630111320793](./images/编写规则1.png)
 
-![image-20220630111404076](.\images\编写规则2.png)
+![image-20220630111404076](./images/编写规则2.png)
 
 ### 2.命令行使用browserslist
 
@@ -369,7 +369,7 @@ not dead
 
 ### 4.默认配置和条件关系
 
-![image-20220630111749966](.\images\默认配置.png)
+![image-20220630111749966](./images/默认配置.png)
 
 
 

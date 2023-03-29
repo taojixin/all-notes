@@ -688,7 +688,7 @@ WHERE employees.department_id = departments.department_id;
 
 > 如下图，根据job_grades表中的lowest_sal和highest_sal通过employees中的员工salary给员工工资划分等级；代码如下：
 
-![image-20211217173438890](\javapicture\image-20211217173438890.png)
+![image-20211217173438890](./javapicture/image-20211217173438890.png)
 
 ```mysql
 SELECT last_name,salary,grade_level
@@ -701,7 +701,7 @@ AND e.`salary` <=j.`highest_sal`;
 
 > 本质上是同一张表，只是用取别名的方式虚拟成两张表以代表不同的意义。然后两 个表再进行内连接，外连接等查询。
 
-![image-20211217174629233](.\javapicture\自连接.png)
+![image-20211217174629233](../javapicture/自连接.png)
 
 ```mysql
 #查询员工姓名及其管理者的ID和姓名
@@ -793,7 +793,7 @@ SELECT column,... FROM table2
 
 #### (8)7种JOIN的实现
 
-![image-20211217185254702](\javapicture\7种join.png)
+![image-20211217185254702](./javapicture/7种join.png)
 
 ```mysql
 # 中图：内连接
@@ -1206,7 +1206,7 @@ FROM DUAL;
 | DATE_ADD(datetime, INTERVAL expr type)， ADDDATE(date,INTERVAL  expr type) | 返回与给定日期时间相差INTERVAL时间段的日期时间 |
 | DATE_SUB(date,INTERVAL expr type)， SUBDATE(date,INTERVAL expr type) | 返回与date相差INTERVAL时间间隔的日期           |
 
-![image-20211218150303376](\javapicture\第一组.png)
+![image-20211218150303376](./javapicture/第一组.png)
 
 **第二组：**
 
@@ -1277,7 +1277,7 @@ FROM DUAL;
 
 **GET_FORMAT函数中date_type和format_type参数取值如下：**
 
-![image-20211218150736479](.\javapicture\image-20211218150736479.png)
+![image-20211218150736479](../javapicture/image-20211218150736479.png)
 
 
 

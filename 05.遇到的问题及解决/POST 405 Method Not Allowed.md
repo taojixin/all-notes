@@ -14,11 +14,11 @@
 
 > 原来远程服务器中未在**nginx.conf**中配置**api**的请求地址。之前配置的是**pc端**页面的`api`，这次需要配置后台管理系统的`admin`，但是未配置所以出错。
 
-![image-20220428181228931](\image\api与admin.png)
+![image-20220428181228931](./image/api与admin.png)
 
 
 
 ### 解决
 
-![image-20220428181339865](.\image\api与admin2.png)
+![image-20220428181339865](../image/api与admin2.png)
 

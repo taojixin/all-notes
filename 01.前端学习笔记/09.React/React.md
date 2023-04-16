@@ -2096,3 +2096,412 @@ export default App
 
 > reducer是一个纯函数； reducer做的事情就是将传入的state和action结合起来生成一个新的state；
 
+
+
+### 2.Redux三个原则
+
+**单一数据源**：
+
+* 整个应用程序的state被存储在一颗object tree中，并且这个object tree只存储在一个 store 中；
+* Redux并没有强制让我们不能创建多个Store，但是那样做并不利于数据的维护；
+* 单一的数据源可以让整个应用程序的state变得方便维护、追踪、修改；
+
+**State是只读的**：
+
+* 唯一修改State的方法一定是触发**action**，不要试图在其他地方通过任何的方式来修改State；
+* 这样就确保了View或网络请求都不能直接修改state，它们只能通过action来描述自己想要如何修改state；
+* 这样可以保证所有的修改都被集中化处理，并且按照严格的顺序来执行，所以不需要担心race condition（竟态）的问题；
+
+**使用纯函数来执行修改**
+
+* 通过**reducer**将 旧state和 actions联系在一起，并且返回一个新的State；
+* 随着应用程序的复杂度增加，我们可以将reducer拆分成多个小的reducers，分别操作不同state tree的一部分；
+* 但是所有的**reducer都应该是纯函数**，不能产生任何的副作用；
+
+
+
+### 3.Redux基本使用过程
+
+> **npm install redux --save**
+>
+> 注：以下为node环境下
+
+#### (1)创建
+
+* 1.创建一个对象，作为我们要保存的状态；
+* 2.创建Store来存储这个state， 创建store时必须创建reducer；，可以通过 store.getState 来获取当前的state； 
+
+* 3.通过action来修改state ，通过dispatch来派发action；，通常action中都会有type属性，也可以携带其他的数据；
+* 4.修改reducer中的处理代码 ，reducer是一个纯函数，不需要直接修改state；
+* 5.可以在派发action之前，监听store的变化；
+
+```javascript
+const { createStore } = require("redux")
+
+// 初始化的数据
+const initialState = {
+  name: "why",
+  counter: 100
+}
+
+// 定义reducer函数: 纯函数
+// 两个参数: 
+// 参数一: store中目前保存的state
+// 参数二: 本次需要更新的action(dispatch传入的action)
+// 返回值: 它的返回值会作为store之后存储的state
+function reducer(state = initialState, action) {
+  // 有新数据进行更新的时候, 那么返回一个新的state
+  if (action.type === "change_name") {
+    return { ...state, name: action.name }
+  } else if (action.type === "add_number") {
+    return { ...state, counter: state.counter + action.num }
+  }
+  // 没有新数据更新, 那么返回之前的state
+  return state
+}
+
+// 创建的store
+const store = createStore(reducer)
+
+module.exports = store
+```
+
+#### (2)使用store中的数据
+
+```javascript
+const store = require("./store")
+console.log(store.getState())
+```
+
+#### (3)修改stroe中的数据
+
+```javascript
+const store = require("./store")
+
+// 修改store中的数据: 必须action
+const nameAction = { type: "change_name", name: "kobe" }
+store.dispatch(nameAction)
+
+console.log(store.getState())
+
+const nameAction2 = { type: "change_name", name: "lilei" }
+store.dispatch(nameAction2)
+console.log(store.getState())
+
+// 修改counter
+const counterAction = { type: "add_number", num: 10 }
+store.dispatch(counterAction)
+console.log(store.getState())
+```
+
+#### (4)订阅store中的数据
+
+```javascript
+const store = require("./store")
+
+const unsubscribe = store.subscribe(() => {
+  console.log("订阅数据的变化:", store.getState())
+})
+
+// 修改store中的数据: 必须action
+store.dispatch({ type: "change_name", name: "kobe" })
+store.dispatch({ type: "change_name", name: "lilei" })
+
+unsubscribe()
+
+// 修改counter
+store.dispatch({ type: "add_number", num: 10 })
+store.dispatch({ type: "add_number", num: 20 })
+store.dispatch({ type: "add_number", num: 30 })
+store.dispatch({ type: "add_number", num: 100 })
+```
+
+#### (5)redux融入react代码
+
+> 核心代码主要是两个：在 **componentDidMount** 中定义数据的变化，当数据发生变化时重新设置 counter; 在发生点击事件时，调用store的dispatch来派发对应的action；
+
+```jsx
+import React, { PureComponent } from 'react'
+import store from "../store"
+import { addNumberAction } from '../store/counter'
+
+export class Home extends PureComponent {
+  constructor() {
+    super()
+
+    this.state = {
+      counter: store.getState().counter.counter,
+
+      message: "Hello World",
+      friends: [
+        {id: 111, name: "why"},
+        {id: 112, name: "kobe"},
+        {id: 113, name: "james"},
+      ]
+    }
+  }
+
+  componentDidMount() {
+    store.subscribe(() => {
+      const state = store.getState().counter
+      this.setState({ counter: state.counter })
+    })
+  }
+
+  addNumber(num) {
+    store.dispatch(addNumberAction(num))
+  }
+
+  render() {
+    const { counter } = this.state
+
+    return (
+      <div>
+        <h2>Home Counter: {counter}</h2>
+        <div>
+          <button onClick={e => this.addNumber(1)}>+1</button>
+          <button onClick={e => this.addNumber(5)}>+5</button>
+          <button onClick={e => this.addNumber(8)}>+8</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default Home
+```
+
+
+
+### 4.react-redux
+
+> redux和react没有直接的关系，完全可以在React, Angular, Ember, jQuery, or vanilla  JavaScript中使用Redux。 尽管这样说，redux依然是和React库结合的更好，因为他们是通过state函数来描述界面的状态，Redux可以发射状态的更新， 让他们作出相应。 redux官方提供了 react-redux 的库，可以直接在项目中使用，并且实现的逻辑会更加的严谨和高效。
+>
+> npm install react-redux
+
+![image-20230413150602914](./images/react-redux1.png)
+
+![image-20230413150629555](./images/react-redux2.png)
+
+
+
+### 5.redux-trunk
+
+> 网络请求到的数据也属于我们状态管理的一部分，更好的一种方式应该是将其也交给redux来管理,官网推荐的、包括演示的网络请求的中间件是使用 **redux-thunk**
+
+* 1.安装redux-thunk 
+* 2.在创建store时传入应用了middleware的enhance函数 
+* * 通过applyMiddleware来结合多个Middleware, 返回一个enhancer；
+  * 将enhancer作为第二个参数传入到createStore中；
+
+```javascript
+const enhancer = applyMiddleware(thunkMiddleware);
+const store = createStore(reducer, enhancer);
+```
+
+* 3.定义返回一个函数的action： 
+* * 注意：这里不是返回一个对象了，而是一个函数；
+  * 该函数在dispatch之后会被执行；
+
+```javascript
+import * as actionTypes from "./constants"
+import axios from "axios"
+
+export const addNumberAction = (num) => ({
+  type: actionTypes.ADD_NUMBER,
+  num
+})
+
+export const fetchHomeMultidataAction = () => {
+  // 如果是一个普通的action, 那么我们这里需要返回action对象
+  // 问题: 对象中是不能直接拿到从服务器请求的异步数据的
+  // return {}
+  return function(dispatch, getState) {
+    // 异步操作: 网络请求
+    // console.log("foo function execution-----", getState().counter)
+    axios.get("http://123.207.32.32:8000/home/multidata").then(res => {
+      const banners = res.data.data.banner.list
+      const recommends = res.data.data.recommend.list
+
+      // dispatch({ type: actionTypes.CHANGE_BANNERS, banners })
+      // dispatch({ type: actionTypes.CHANGE_RECOMMENDS, recommends })
+      dispatch(changeBannersAction(banners))
+      dispatch(changeRecommendsAction(recommends))
+    })
+  }
+  // 如果返回的是一个函数, 那么redux是不支持的
+  // return foo
+}
+```
+
+
+
+### 6.combineReducers
+
+> redux给我们提供了一个combineReducers函数可以方便的让我们对多个reducer进行合并：
+
+```javascript
+import { createStore, applyMiddleware, compose, combineReducers } from "redux"
+import thunk from "redux-thunk"
+
+import counterReducer from "./counter"
+import homeReducer from "./home"
+import userReducer from "./user"
+
+// 正常情况下 store.dispatch(object)
+// 想要派发函数 store.dispatch(function)
+
+// 将两个reducer合并在一起
+const reducer = combineReducers({
+  counter: counterReducer,
+  home: homeReducer,
+  user: userReducer
+})
+
+// redux-devtools
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({trace: true}) || compose;
+const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)))
+
+export default store
+```
+
+
+
+### 7.Redux Toolkit
+
+> redux的编写逻辑过于的繁琐和麻烦。 并且代码通常分拆在多个文件中（虽然也可以放到一个文件管理，但是代码量过多，不利于管理）；**Redux Toolkit包**旨在成为编写Redux逻辑的标准方式，从而解决上面提到的问题；
+>
+> **npm install @reduxjs/toolkit react-redux**
+
+**Redux Toolkit的核心API主要是如下几个**：
+
+* **configureStore**：包装createStore以提供简化的配置选项和良好的默认值。它可以自动组合你的 slice reducer，添加你提供 的任何 Redux 中间件，redux-thunk默认包含，并启用 Redux DevTools Extension。
+* **createSlice**：接受reducer函数的对象、切片名称和初始状态值，并自动生成切片reducer，并带有相应的actions。
+* **createAsyncThunk**: 接受一个动作类型字符串和一个返回承诺的函数，并生成一个pending/fulfilled/rejected基于该承诺分 派动作类型的 thunk
+
+#### (1)createSlice
+
+**参数**：
+
+* name：用户标记slice的名词  在之后的redux-devtool中会显示对应的名词；
+* initialState：初始化值  第一次初始化时的值；
+* reducers：相当于之前的reducer函数
+* * 对象类型，并且可以添加很多的函数；
+  * 函数类似于redux原来reducer中的一个case语句；函数的参数： ✓ 参数一：state ✓ 参数二：调用这个action时，传递的action参数；
+* createSlice返回值是一个对象，包含所有的actions；
+
+```javascript
+import { createSlice } from "@reduxjs/toolkit"
+
+const counterSlice = createSlice({
+  name: "counter",
+  initialState: {
+    counter: 888
+  },
+  reducers: {
+    addNumber(state, { payload }) {
+      state.counter = state.counter + payload
+    },
+    subNumber(state, { payload }) {
+      state.counter = state.counter - payload
+    }
+  }
+})
+
+export const { addNumber, subNumber } = counterSlice.actions
+export default counterSlice.reducer
+```
+
+#### (2)configureStore
+
+**参数**：
+
+* reducer，将slice中的reducer可以组成一个对象传入此处；
+* middleware：可以使用参数，传入其他的中间件（自行了解）；
+* devTools：是否配置devTools工具，默认为true；
+
+```javascript
+import { configureStore } from "@reduxjs/toolkit"
+
+import counterReducer from "./features/counter"
+import homeReducer from "./features/home"
+
+const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+    home: homeReducer
+  }
+})
+
+export default store
+```
+
+#### (3)createAsyncThunk
+
+当createAsyncThunk创建出来的action被dispatch时，会存在三种状态：
+
+* pending：action被发出，但是还没有最终的结果；
+* fulfilled：获取到最终的结果（有返回值的结果）；
+* rejected：执行过程中有错误或者抛出了异常
+
+```javascript
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import axios from 'axios'
+
+export const fetchHomeMultidataAction = createAsyncThunk(
+  "fetch/homemultidata", 
+  async (extraInfo, { dispatch, getState }) => {
+    // console.log(extraInfo, dispatch, getState)
+    // 1.发送网络请求, 获取数据
+    const res = await axios.get("http://123.207.32.32:8000/home/multidata")
+
+    // 2.取出数据, 并且在此处直接dispatch操作(可以不做)
+    const banners = res.data.data.banner.list
+    const recommends = res.data.data.recommend.list
+    dispatch(changeBanners(banners))
+    dispatch(changeRecommends(recommends))
+
+    // 3.返回结果, 那么action状态会变成fulfilled状态
+    return res.data
+})
+
+const homeSlice = createSlice({
+  name: "home",
+  initialState: {
+    banners: [],
+    recommends: []
+  },
+  reducers: {
+    changeBanners(state, { payload }) {
+      state.banners = payload
+    },
+    changeRecommends(state, { payload }) {
+      state.recommends = payload
+    }
+  },
+  // extraReducers: {
+  //   [fetchHomeMultidataAction.pending](state, action) {
+  //     console.log("fetchHomeMultidataAction pending")
+  //   },
+  //   [fetchHomeMultidataAction.fulfilled](state, { payload }) {
+  //     state.banners = payload.data.banner.list
+  //     state.recommends = payload.data.recommend.list
+  //   },
+  //   [fetchHomeMultidataAction.rejected](state, action) {
+  //     console.log("fetchHomeMultidataAction rejected")
+  //   }
+  // }
+  extraReducers: (builder) => {
+    // builder.addCase(fetchHomeMultidataAction.pending, (state, action) => {
+    //   console.log("fetchHomeMultidataAction pending")
+    // }).addCase(fetchHomeMultidataAction.fulfilled, (state, { payload }) => {
+    //   state.banners = payload.data.banner.list
+    //   state.recommends = payload.data.recommend.list
+    // })
+  }
+})
+
+export const { changeBanners, changeRecommends } = homeSlice.actions
+export default homeSlice.reducer
+```
+

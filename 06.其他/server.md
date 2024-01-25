@@ -48,3 +48,9 @@ gitBash连接远程服务器：**ssh root@120.79.177.24**
 * 杀死指定的进程 **pm2 delete 0**  
 * 杀死全部进程 **pm2 delete all**  
 * 后台运⾏pm2，启动4个app.js，实现负载均衡 **pm2 start app.js -i 4**
+
+
+
+**redis-server.exe redis.windows.conf**
+
+**redis-cli**
